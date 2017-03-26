@@ -2,7 +2,11 @@
   "name": "corespa",
   "version": "0.0.0",
   "scripts": {
-    "test": "karma start ClientApp/test/karma.conf.js"
+    "test": "karma start ClientApp/test/karma.conf.js",
+    "postinstall": "npm run build:webpack",
+    "build:webpack": "npm run webpack-vendor && npm run webpack",
+    "webpack": "webpack --progress",
+    "webpack-vendor": "webpack --config webpack.config.vendor.js --progress"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",
@@ -17,7 +21,7 @@
     "@angular/platform-server": "^4.0.0",
     "@angular/router": "^4.0.0",
     "@angular/tsc-wrapped": "^0.5.0",
-    "@types/node": "^6.0.42",    
+    "@types/node": "^6.0.42",
     "angular2-template-loader": "^0.6.2",
     "aspnet-prerendering": "^2.0.0",
     "aspnet-webpack": "^1.0.17",
