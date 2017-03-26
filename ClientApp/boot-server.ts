@@ -1,34 +1,29 @@
-import 'angular2-universal-polyfills';
-import 'angular2-universal-patch';
-import 'zone.js';
-import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
+import './polyfills/server.polyfills';
 import { enableProdMode } from '@angular/core';
-import { platformNodeDynamic } from 'angular2-universal';
-import { AppModule } from './app/app.module';
+import { INITIAL_CONFIG } from '@angular/platform-server';
+import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
+// Grab the (Node) server-specific NgModule
+import { AppServerModule } from './app/server-app.module';
+// Temporary * the engine will be on npm soon (`@universal/ng-aspnetcore-engine`)
+import { ngAspnetCoreEngine } from './polyfills/temporary-aspnetcore-engine';
 
 enableProdMode();
-const platform = platformNodeDynamic();
 
 export default createServerRenderer(params => {
-    return new Promise<RenderResult>((resolve, reject) => {
-        const requestZone = Zone.current.fork({
-            name: 'angular-universal request',
-            properties: {
-                baseUrl: '/',
-                requestUrl: params.url,
-                originUrl: params.origin,
-                preboot: false,
-                document: '<app></app>'
-            },
-            onHandleError: (parentZone, currentZone, targetZone, error) => {
-                // If any error occurs while rendering the module, reject the whole operation
-                reject(error);
-                return true;
-            }
-        });
 
-        return requestZone.run<Promise<string>>(() => platform.serializeModule(AppModule)).then(html => {
-            resolve({ html: html });
-        }, reject);
+    // Platform-server provider configuration
+    const providers = [{
+        provide: INITIAL_CONFIG,
+        useValue: {
+            document: '<app></app>', // Our Root application document
+            url: params.url
+        }
+    }];
+
+    return ngAspnetCoreEngine(providers, AppServerModule).then(response => {
+        return ({
+            html: response.html,
+            globals: response.globals
+        });
     });
 });

@@ -1,7 +1,8 @@
-import 'angular2-universal-polyfills/browser';
+import './polyfills/browswer.polyfills';
 import { enableProdMode } from '@angular/core';
-import { platformUniversalDynamic } from 'angular2-universal';
-import { AppModule } from './app/app.module';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppBrowserModule } from './app/browser-app.module';
+
 import 'bootstrap';
 const rootElemTagName = 'app'; // Update this if you change your root component selector
 
@@ -20,8 +21,8 @@ if (module['hot']) {
 }
 
 // Boot the application, either now or when the DOM content is loaded
-const platform = platformUniversalDynamic();
-const bootApplication = () => { platform.bootstrapModule(AppModule); };
+const platform = platformBrowserDynamic();
+const bootApplication = () => { platform.bootstrapModule(AppBrowserModule); };
 if (document.readyState === 'complete') {
     bootApplication();
 } else {
